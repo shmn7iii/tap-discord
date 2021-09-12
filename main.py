@@ -63,7 +63,7 @@ async def _issue(ctx, arg):
             "uid": uid,
             "data": dataurl
     }
-    response = requests.post('http://localhost:3000/tokens',
+    response = requests.post('http://api.tap.shmn7iii.net/tokens',
                                 json.dumps(body),
                                 headers={'Content-Type': 'application/json'}
                             )
