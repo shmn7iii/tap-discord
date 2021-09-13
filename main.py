@@ -68,18 +68,7 @@ async def _issue(ctx, arg):
                                 headers={'Content-Type': 'application/json'}
                             )
 
-    await ctx.channel.send(response.json())
-
-
-
-def download_img(_url, _filepath):
-    r = requests.get(_url, stream=True)
-    if r.status_code == 200:
-        with open(_filepath, 'wb') as f:
-            f.write(r.content)
-
-
-def upload_firebase(_filepath, _filename):
-    storage.child('images/' + _filename).put(_filepath)
+    print(json.dumps(response.json(), indent=4))
+    await ctx.channel.send(json.dumps(response.json(), indent=4))
 
 client.run(os.getenv('TOKEN'))
