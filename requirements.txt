@@ -1,5 +1,0 @@
-requests
-datetime
-discord.py
-python-dotenv
-pyrebase
