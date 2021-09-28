@@ -6,7 +6,7 @@
 
     <groupId>net.shmn7iii</groupId>
     <artifactId>tap-discord</artifactId>
-    <version>1.0</version>
+    <version>0.1</version>
     <build>
 
         <plugins>
