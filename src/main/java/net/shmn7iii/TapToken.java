@@ -31,7 +31,7 @@ public class TapToken {
 
     public ArrayList<MessageEmbed> indexToken(long num){
         // send API request
-        JsonNode json = Http.getResult(APIROOTPATH + num);
+        JsonNode json = Http.sendRequest2API(Http.METHOD.GET,APIROOTPATH + num, null);
 
         // create embed
         ArrayList<MessageEmbed> embeds = new ArrayList<MessageEmbed>();
@@ -51,7 +51,7 @@ public class TapToken {
 
     public MessageEmbed getTokenInfo(String token_id){
         // send API request
-        JsonNode json = Http.getResult(APIROOTPATH + "info/" + token_id);
+        JsonNode json = Http.sendRequest2API(Http.METHOD.GET,APIROOTPATH + "info/" + token_id, null);
 
         String data = json.get("data").get("data").textValue();
         String created_at = json.get("data").get("created_at").textValue();
@@ -67,7 +67,7 @@ public class TapToken {
     public MessageEmbed issueToken(String uid, String data){
         // send API request
         String str_json = "{ \"uid\": \"" + uid + "\", \"data\": \"" + data + "\" }";
-        JsonNode json = Http.postJson(APIROOTPATH, str_json);
+        JsonNode json = Http.sendRequest2API(Http.METHOD.POST, APIROOTPATH, str_json);
 
         String token_id = json.get("data").get("token_id").textValue();
         String data_r = json.get("data").get("data").textValue();
@@ -85,7 +85,7 @@ public class TapToken {
     public MessageEmbed transferToken(String sender_uid, String receiver_uid, String token_id){
         // send API request
         String str_json = "{ \"sender_uid\": \"" + sender_uid + "\", \"receiver_uid\": \"" + receiver_uid + "\" }";
-        JsonNode json = Http.putJson(APIROOTPATH + token_id, str_json);
+        JsonNode json = Http.sendRequest2API(Http.METHOD.PUT, APIROOTPATH + token_id, str_json);
 
         String txid = json.get("data").get("txid").textValue();
 
@@ -105,7 +105,7 @@ public class TapToken {
     public MessageEmbed burnToken(String uid, String token_id){
         // send API request
         String str_json = "{ \"uid\": \"" + uid + "\" }";
-        JsonNode json = Http.deleteJson(APIROOTPATH + token_id, str_json);
+        JsonNode json = Http.sendRequest2API(Http.METHOD.DELETE, APIROOTPATH + token_id, str_json);
 
         String txid = json.get("data").get("txid").textValue();
 

@@ -28,7 +28,7 @@ public class TapUser {
 
     public ArrayList<MessageEmbed> indexToken(long num){
         // send API request
-        JsonNode json = Http.getResult(APIROOTPATH + num);
+        JsonNode json = Http.sendRequest2API(Http.METHOD.GET, APIROOTPATH + num, null);
 
         // create embed
         ArrayList<MessageEmbed> embeds = new ArrayList<MessageEmbed>();
@@ -50,7 +50,7 @@ public class TapUser {
         ArrayList<MessageEmbed> embeds = new ArrayList<MessageEmbed>();
 
         // send API request
-        JsonNode json = Http.getResult(APIROOTPATH + "info/" + uid);
+        JsonNode json = Http.sendRequest2API(Http.METHOD.GET, APIROOTPATH + "info/" + uid, null);
 
         String wallet_id = json.get("data").get("wallet_id").textValue();
         String created_at = json.get("data").get("created_at").textValue();
@@ -79,7 +79,7 @@ public class TapUser {
     public ArrayList<MessageEmbed> createUser(String uid){
         // send API request
         String str_json = "{ \"uid\": \"" + uid + "\" }";
-        JsonNode json = Http.postJson(APIROOTPATH, str_json);
+        JsonNode json = Http.sendRequest2API(Http.METHOD.POST, APIROOTPATH, str_json);
 
         // create embed
         return getUserInfo(uid);
@@ -87,7 +87,7 @@ public class TapUser {
 
     public MessageEmbed destroyUser(String uid){
         // send API request
-        JsonNode json = Http.deleteJson(APIROOTPATH + uid, "{}");
+        JsonNode json = Http.sendRequest2API(Http.METHOD.DELETE, APIROOTPATH + uid, "{}");
 
         // create embed
         EmbedBuilder eb = new EmbedBuilder()
