@@ -13,17 +13,20 @@ public class Main {
     public static void main(String[] args) throws LoginException, InterruptedException, IOException {
         String token = null;
         String cred_path = null;
+        boolean commandCreate = false;
 
         for (int i=0; i<args.length; ++i) {
             if ("-token".equals(args[i])) {
                 token = args[++i];
             } else if ("-credential".equals(args[i])) {
                 cred_path = args[++i];
+            } else if ("-createcommand".equals(args[i])) {
+                commandCreate = Boolean.parseBoolean(args[++i]);
             }
         }
 
         if (token == null || cred_path == null){
-            System.out.println("-token <token_id> -credential <credential file path>");
+            System.out.println("-token <token_id> -credential <credential file path> -createcommand <bool>");
             System.exit(1);
         }
 
@@ -38,9 +41,9 @@ public class Main {
                 .addEventListeners(new Event())
                 .build();
 
-        jda.awaitReady();
-
-        createCommands(jda);
+        if (commandCreate){
+            createCommands(jda);
+        }
 
         jda.getGuildById("865554173231104021").updateCommands().queue();
         jda.updateCommands().queue();
