@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
-import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
 
