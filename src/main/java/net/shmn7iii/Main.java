@@ -61,16 +61,16 @@ public class Main {
 
                 new SubcommandData("issue", "Issue token.")
                         .addOption(OptionType.STRING, "uid", "type your uid", true)
-                        .addOption(OptionType.STRING, "data", "type image url", true) //,
+                        .addOption(OptionType.STRING, "data", "type image url", true),
 
-//                new SubcommandData("transfer", "Transfer token to someone.")
-//                        .addOption(OptionType.STRING, "token_id", "token's id", true)
-//                        .addOption(OptionType.STRING, "sender_uid", "sender's uid", true)
-//                        .addOption(OptionType.STRING, "receiver_uid", "receiver's uid", true),
-//
-//                new SubcommandData("burn", "Burn token.")
-//                        .addOption(OptionType.STRING, "uid", "type your uid", true)
-//                        .addOption(OptionType.STRING, "token_id", "token's id", true)
+                new SubcommandData("transfer", "Transfer token to someone.")
+                        .addOption(OptionType.STRING, "token_id", "token's id", true)
+                        .addOption(OptionType.STRING, "sender_uid", "sender's uid", true)
+                        .addOption(OptionType.STRING, "receiver_uid", "receiver's uid", true),
+
+                new SubcommandData("burn", "Burn token.")
+                        .addOption(OptionType.STRING, "uid", "type your uid", true)
+                        .addOption(OptionType.STRING, "token_id", "token's id", true)
                 );
 
         CommandData userCommand = new CommandData("user", "About users.");
