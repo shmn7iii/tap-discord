@@ -4,8 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class TapToken {
     String APIROOTPATH = "https://tap-api.shmn7iii.net/tokens/";
@@ -28,14 +31,20 @@ public class TapToken {
     }
 
 
-    public ArrayList<MessageEmbed> indexToken(long num){
+    public ArrayList<MessageEmbed> indexToken(@Nullable String num){
         // send API request
-        JsonNode json = Http.sendRequest2API(Http.METHOD.GET,APIROOTPATH + num, null);
+        JsonNode json;
+        if (num == null){
+            json = Http.sendRequest2API(Http.METHOD.GET,APIROOTPATH, null);
+        } else {
+            json = Http.sendRequest2API(Http.METHOD.GET,APIROOTPATH + "?limit=" + num, null);
+        }
+
+        JsonNode tokens = json.get("data");
 
         // create embed
         ArrayList<MessageEmbed> embeds = new ArrayList<MessageEmbed>();
-        for (int i = 0; i < num; i++ ){
-            JsonNode token = json.get("data").get(i);
+        for (JsonNode token: tokens){
             String token_id = token.get("token_id").textValue();
             String data = token.get("data").textValue();
             String created_at = token.get("created_at").textValue();
@@ -50,7 +59,7 @@ public class TapToken {
 
     public MessageEmbed getTokenInfo(String token_id){
         // send API request
-        JsonNode json = Http.sendRequest2API(Http.METHOD.GET,APIROOTPATH + "info/" + token_id, null);
+        JsonNode json = Http.sendRequest2API(Http.METHOD.GET,APIROOTPATH + token_id, null);
 
         String data = json.get("data").get("data").textValue();
         String created_at = json.get("data").get("created_at").textValue();
@@ -80,7 +89,6 @@ public class TapToken {
     }
 
 
-    // FIXME:動かん
     public MessageEmbed transferToken(String sender_uid, String receiver_uid, String token_id){
         // send API request
         String str_json = "{ \"sender_uid\": \"" + sender_uid + "\", \"receiver_uid\": \"" + receiver_uid + "\" }";
@@ -100,7 +108,6 @@ public class TapToken {
         return eb.build();
     }
 
-    // FIXME:動かん
     public MessageEmbed burnToken(String uid, String token_id){
         // send API request
         String str_json = "{ \"uid\": \"" + uid + "\" }";

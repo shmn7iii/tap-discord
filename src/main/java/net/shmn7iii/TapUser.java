@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -26,14 +27,20 @@ public class TapUser {
         return eb.build();
     }
 
-    public ArrayList<MessageEmbed> indexToken(long num){
+    public ArrayList<MessageEmbed> indexToken(@Nullable String num){
         // send API request
-        JsonNode json = Http.sendRequest2API(Http.METHOD.GET, APIROOTPATH + num, null);
+        JsonNode json;
+        if (num == null){
+            json = Http.sendRequest2API(Http.METHOD.GET,APIROOTPATH, null);
+        } else {
+            json = Http.sendRequest2API(Http.METHOD.GET,APIROOTPATH + "?limit=" + num, null);
+        }
+
+        JsonNode users = json.get("data");
 
         // create embed
         ArrayList<MessageEmbed> embeds = new ArrayList<MessageEmbed>();
-        for (int i = 0; i < num; i++ ){
-            JsonNode user = json.get("data").get(i);
+        for (JsonNode user: users){
             String uid = user.get("uid").textValue();
             String wallet_id = user.get("wallet_id").textValue();
             String created_at = user.get("created_at").textValue();
@@ -50,7 +57,7 @@ public class TapUser {
         ArrayList<MessageEmbed> embeds = new ArrayList<MessageEmbed>();
 
         // send API request
-        JsonNode json = Http.sendRequest2API(Http.METHOD.GET, APIROOTPATH + "info/" + uid, null);
+        JsonNode json = Http.sendRequest2API(Http.METHOD.GET, APIROOTPATH + uid, null);
 
         String wallet_id = json.get("data").get("wallet_id").textValue();
         String created_at = json.get("data").get("created_at").textValue();

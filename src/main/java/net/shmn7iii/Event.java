@@ -14,11 +14,9 @@ public class Event extends ListenerAdapter {
                 event.deferReply().queue();
 
                 // get string from option
-                long num;
-                if (event.getOption("num") == null){
-                    num = 5;
-                } else{
-                    num = event.getOption("num").getAsLong();
+                String num = null;
+                if (event.getOption("num") != null){
+                    num = event.getOption("num").getAsString();
                 }
 
                 // reply
@@ -91,12 +89,9 @@ public class Event extends ListenerAdapter {
                 event.deferReply().queue();
 
                 // get string from option
-                long num;
-                if (event.getOption("num") == null){
-                    // FIXME: 5にしてるけどそもAPIサーバーにあるのが5未満だとエラーはく。そりゃね。
-                    num = 5;
-                } else{
-                    num = event.getOption("num").getAsLong();
+                String num = null;
+                if (event.getOption("num") != null){
+                    num = event.getOption("num").getAsString();
                 }
 
                 // reply
