@@ -41,6 +41,8 @@ public class Main {
                 .addEventListeners(new Event())
                 .build();
 
+        jda.awaitReady();
+
         if (commandCreate){
             createCommands(jda);
         }
