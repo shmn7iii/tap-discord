@@ -7,10 +7,14 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.StorageClient;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class Firebase {
@@ -30,13 +34,51 @@ public class Firebase {
     }
 
     public String getDownloadURL(String data){
+        // get filename from Firebase URI
         String[] ary = data.split("/");
         String filename = ary[ary.length - 1];
 
+        // get storage blob
         StorageClient storage = StorageClient.getInstance(this.firebaseapp);
         Bucket bucket = storage.bucket();
         Blob blob = bucket.get(filename);
+
+        // get download url
         URL url = blob.signUrl(14, TimeUnit.DAYS);
+
         return url.toString();
+    }
+
+    public String addImage2Firebase(String imageURL) throws IOException {
+        // get image byte array from url
+        String[] ary = imageURL.split("\\.");
+        String extension = ary[ary.length - 1];
+        byte[] imageByte = getImageByteArray(imageURL,extension );
+
+        // create file name
+        Random random = new Random();
+        String filename = "fromdicbot" + random.nextInt(10000000) + "." + extension;
+
+        // get storage bucket
+        StorageClient storage = StorageClient.getInstance(this.firebaseapp);
+        Bucket bucket = storage.bucket();
+
+        // create blob
+        Blob blob = bucket.create("tmp/" + filename, imageByte, "image/" + extension);
+
+        // return Firebase URI
+        String URI = "gs://tap-f4f38.appspot.com/tmp/" + filename;
+
+        return URI;
+    }
+
+
+    // https://qiita.com/narikei/items/bc15002f3cac5d975b34
+    public byte[] getImageByteArray(String _url, String fileNameExtension) throws IOException {
+        URL url = new URL(_url);
+        BufferedImage readImage = ImageIO.read(url);
+        ByteArrayOutputStream outPutStream = new ByteArrayOutputStream();
+        ImageIO.write(readImage, fileNameExtension, outPutStream);
+        return outPutStream.toByteArray();
     }
 }

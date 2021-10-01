@@ -3,104 +3,48 @@ package net.shmn7iii;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import javax.annotation.Nullable;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class Http {
-    public static JsonNode getResult(String urlString) {
-        String result = "";
-        JsonNode root = null;
-        try {
-            URL url = new URL(urlString);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.connect();
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            String tmp = "";
-            while ((tmp = in.readLine()) != null) {
-                result += tmp;
-            }
-            ObjectMapper mapper = new ObjectMapper();
-            root = mapper.readTree(result);
-            in.close();
-            con.disconnect();
-        }catch(Exception e) {
-            e.printStackTrace();
-        }
-
-        return root;
+    public enum METHOD{
+        GET,
+        POST,
+        PUT,
+        DELETE
     }
 
-    public static JsonNode postJson(String urlString, String json) {
+    public static JsonNode sendRequest2API(METHOD _method, String _url, @Nullable String _jsonBody){
         String result = "";
         JsonNode root = null;
-        try {
-            URL url = new URL(urlString);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("POST");
-            con.setDoInput(true);
-            con.setDoOutput(true);
-            con.setRequestProperty("Content-Type", "application/json");
-            OutputStreamWriter out = new OutputStreamWriter(
-                    new BufferedOutputStream(con.getOutputStream()));
-            out.write(json);
-            out.close();
+        String method = "";
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            String tmp = "";
-            while ((tmp = in.readLine()) != null) {
-                result += tmp;
-            }
-            ObjectMapper mapper = new ObjectMapper();
-            root = mapper.readTree(result);
-            in.close();
-            con.disconnect();
-        } catch (IOException e) {
-            e.printStackTrace();
+        switch (_method){
+            case GET:   method = "GET"; break;
+            case POST:  method = "POST"; break;
+            case PUT:   method = "PUT"; break;
+            case DELETE:   method = "DELETE"; break;
         }
-        return root;
-    }
 
-    public static JsonNode putJson(String urlString, String json) {
-        String result = "";
-        JsonNode root = null;
         try {
-            URL url = new URL(urlString);
+            URL url = new URL(_url);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("PUT");
-            con.setDoInput(true);
-            con.setDoOutput(true);
-            con.setRequestProperty("Content-Type", "application/json");
-            OutputStreamWriter out = new OutputStreamWriter(
-                    new BufferedOutputStream(con.getOutputStream()));
-            out.write(json);
-            out.close();
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            String tmp = "";
-            while ((tmp = in.readLine()) != null) {
-                result += tmp;
+            if (method.equals("GET")){
+                con.connect();
+            } else {
+                con.setRequestMethod(method);
+                con.setDoInput(true);
+                con.setDoOutput(true);
+                con.setRequestProperty("Content-Type", "application/json");
+                OutputStreamWriter out = new OutputStreamWriter(
+                        new BufferedOutputStream(con.getOutputStream()));
+                out.write(_jsonBody);
+                out.close();
             }
-            ObjectMapper mapper = new ObjectMapper();
-            root = mapper.readTree(result);
-            in.close();
-            con.disconnect();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return root;
-    }
-
-    // FIXME:ネーミングミスってるだろ流石に
-    public static JsonNode deleteJson(String urlString, String json) {
-        String result = "";
-        JsonNode root = null;
-        try {
-            URL url = new URL(urlString);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("DELETE");
-            con.connect();
 
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String tmp = "";
