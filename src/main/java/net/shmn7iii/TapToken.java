@@ -6,7 +6,10 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 
 import javax.annotation.Nullable;
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class TapToken {
     String APIROOTPATH = "https://tap-api.shmn7iii.net/tokens/";
@@ -29,14 +32,20 @@ public class TapToken {
     }
 
 
-    public ArrayList<MessageEmbed> indexToken(long num){
+    public ArrayList<MessageEmbed> indexToken(@Nullable String num){
         // send API request
-        JsonNode json = Http.getResult(APIROOTPATH + num);
+        JsonNode json;
+        if (num == null){
+            json = Http.sendRequest2API(Http.METHOD.GET,APIROOTPATH, null);
+        } else {
+            json = Http.sendRequest2API(Http.METHOD.GET,APIROOTPATH + "?limit=" + num, null);
+        }
+
+        JsonNode tokens = json.get("data");
 
         // create embed
         ArrayList<MessageEmbed> embeds = new ArrayList<MessageEmbed>();
-        for (int i = 0; i < num; i++ ){
-            JsonNode token = json.get("data").get(i);
+        for (JsonNode token: tokens){
             String token_id = token.get("token_id").textValue();
             String data = token.get("data").textValue();
             String created_at = token.get("created_at").textValue();
@@ -51,7 +60,7 @@ public class TapToken {
 
     public MessageEmbed getTokenInfo(String token_id){
         // send API request
-        JsonNode json = Http.getResult(APIROOTPATH + "info/" + token_id);
+        JsonNode json = Http.sendRequest2API(Http.METHOD.GET,APIROOTPATH + token_id, null);
 
         String data = json.get("data").get("data").textValue();
         String created_at = json.get("data").get("created_at").textValue();
@@ -64,10 +73,13 @@ public class TapToken {
     }
 
 
-    public MessageEmbed issueToken(String uid, String data){
+    public MessageEmbed issueToken(String uid, String data) throws IOException {
+        // get image and store firebase, get data's URI
+        String dataURI = Firebase.getInstance().addImage2Firebase(data);
+
         // send API request
-        String str_json = "{ \"uid\": \"" + uid + "\", \"data\": \"" + data + "\" }";
-        JsonNode json = Http.postJson(APIROOTPATH, str_json);
+        String str_json = "{ \"uid\": \"" + uid + "\", \"data\": \"" + dataURI + "\" }";
+        JsonNode json = Http.sendRequest2API(Http.METHOD.POST, APIROOTPATH, str_json);
 
         String token_id = json.get("data").get("token_id").textValue();
         String data_r = json.get("data").get("data").textValue();
@@ -81,11 +93,10 @@ public class TapToken {
     }
 
 
-    // FIXME:動かん
     public MessageEmbed transferToken(String sender_uid, String receiver_uid, String token_id){
         // send API request
         String str_json = "{ \"sender_uid\": \"" + sender_uid + "\", \"receiver_uid\": \"" + receiver_uid + "\" }";
-        JsonNode json = Http.putJson(APIROOTPATH + token_id, str_json);
+        JsonNode json = Http.sendRequest2API(Http.METHOD.PUT, APIROOTPATH + token_id, str_json);
 
         String txid = json.get("data").get("txid").textValue();
 
@@ -101,11 +112,10 @@ public class TapToken {
         return eb.build();
     }
 
-    // FIXME:動かん
     public MessageEmbed burnToken(String uid, String token_id){
         // send API request
         String str_json = "{ \"uid\": \"" + uid + "\" }";
-        JsonNode json = Http.deleteJson(APIROOTPATH + token_id, str_json);
+        JsonNode json = Http.sendRequest2API(Http.METHOD.DELETE, APIROOTPATH + token_id, str_json);
 
         String txid = json.get("data").get("txid").textValue();
 
