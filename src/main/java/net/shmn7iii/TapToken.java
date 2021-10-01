@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 
 import javax.annotation.Nullable;
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -72,9 +73,12 @@ public class TapToken {
     }
 
 
-    public MessageEmbed issueToken(String uid, String data){
+    public MessageEmbed issueToken(String uid, String data) throws IOException {
+        // get image and store firebase, get data's URI
+        String dataURI = Firebase.getInstance().addImage2Firebase(data);
+
         // send API request
-        String str_json = "{ \"uid\": \"" + uid + "\", \"data\": \"" + data + "\" }";
+        String str_json = "{ \"uid\": \"" + uid + "\", \"data\": \"" + dataURI + "\" }";
         JsonNode json = Http.sendRequest2API(Http.METHOD.POST, APIROOTPATH, str_json);
 
         String token_id = json.get("data").get("token_id").textValue();

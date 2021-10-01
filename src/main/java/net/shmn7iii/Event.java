@@ -3,6 +3,8 @@ package net.shmn7iii;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+import java.io.IOException;
+
 public class Event extends ListenerAdapter {
 
     @Override
@@ -47,9 +49,13 @@ public class Event extends ListenerAdapter {
                 String data = event.getOption("data").getAsString();
 
                 // reply
-                event.getHook()
-                        .sendMessageEmbeds( new TapToken().issueToken(uid, data) )
-                        .queue();
+                try {
+                    event.getHook()
+                            .sendMessageEmbeds( new TapToken().issueToken(uid, data) )
+                            .queue();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
 
