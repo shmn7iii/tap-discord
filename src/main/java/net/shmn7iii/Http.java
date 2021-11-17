@@ -1,5 +1,6 @@
 package net.shmn7iii;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -17,7 +18,7 @@ public class Http {
         DELETE
     }
 
-    public static JsonNode sendRequest2API(METHOD _method, String _url, @Nullable String _jsonBody){
+    public static JsonNode sendRequest2API(METHOD _method, String _url, @Nullable String _jsonBody) throws JsonProcessingException {
         String result = "";
         JsonNode root = null;
         String method = "";
@@ -57,6 +58,14 @@ public class Http {
             con.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
+            String json = "{" +
+                    "\"error\": {" +
+                    "\"message\": \"" + e.getMessage() + "\"" +
+                    "\"string\": \"" + e.toString() + "\"" +
+                    "} " +
+                    "}";
+            ObjectMapper mapper = new ObjectMapper();
+            root = mapper.readTree(json);
         }
         return root;
     }

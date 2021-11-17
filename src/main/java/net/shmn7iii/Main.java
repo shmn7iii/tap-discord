@@ -53,6 +53,8 @@ public class Main {
     }
 
     public static void createCommands(JDA jda){
+        CommandData infoCommand = new CommandData("info", "About me.");
+
         CommandData tokenCommand = new CommandData("token", "About tokens.");
         tokenCommand.addSubcommands(
                 new SubcommandData("index", "Show index of tokens.")
@@ -90,7 +92,7 @@ public class Main {
                         .addOption(OptionType.STRING, "uid", "uid", true)
         );
 
-
+        jda.getGuildById("865554173231104021").upsertCommand(infoCommand).queue();
         jda.getGuildById("865554173231104021").upsertCommand(tokenCommand).queue();
         jda.getGuildById("865554173231104021").upsertCommand(userCommand).queue();
         jda.upsertCommand(tokenCommand).queue();

@@ -1,5 +1,6 @@
 package net.shmn7iii;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -9,6 +10,19 @@ public class Event extends ListenerAdapter {
 
     @Override
     public void onSlashCommand(SlashCommandEvent event) {
+        if (event.getName().equals("info")) {
+            event.deferReply().queue();
+            event.getHook()
+                    .sendMessage( "**:partying_face:  Hi, there! I'm Tap! - Discord**\n" +
+                            "\n" +
+                            "> **About Tap!**\n" +
+                            "> Tap! is a service that makes publishing NFTs easier, more convenient, and more understandable, with the goal of lowering the barriers to NFTs, making them more accessible, and promoting their use in the general public, thereby further developing the NFT industry.\n" +
+                            "> This service was created within the \"Challecara\", and its actual use is yet to be determined. Also, we do not guarantee the tokens. For more information, please refer to the Terms of Use and Privacy Policy. -  Tap! Team.\n" +
+                            "> \n" +
+                            "> **I'm here.**\n" +
+                            "> https://github.com/shmn7iii/tap-discord" )
+                    .queue();
+        }
 
         if (event.getName().equals("token")) {
 
@@ -22,9 +36,13 @@ public class Event extends ListenerAdapter {
                 }
 
                 // reply
-                event.getHook()
-                        .sendMessageEmbeds( new TapToken().indexToken(num) )
-                        .queue();
+                try {
+                    event.getHook()
+                            .sendMessageEmbeds( new TapToken().indexToken(num) )
+                            .queue();
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
             }
 
 
@@ -35,9 +53,13 @@ public class Event extends ListenerAdapter {
                 String token_id = event.getOption("token_id").getAsString();
 
                 // reply
-                event.getHook()
-                        .sendMessageEmbeds( new TapToken().getTokenInfo(token_id) )
-                        .queue();
+                try {
+                    event.getHook()
+                            .sendMessageEmbeds( new TapToken().getTokenInfo(token_id) )
+                            .queue();
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
             }
 
 
@@ -68,9 +90,13 @@ public class Event extends ListenerAdapter {
                 String token_id = event.getOption("token_id").getAsString();
 
                 // reply
-                event.getHook()
-                        .sendMessageEmbeds( new TapToken().transferToken(sender_uid, receiver_uid, token_id) )
-                        .queue();
+                try {
+                    event.getHook()
+                            .sendMessageEmbeds( new TapToken().transferToken(sender_uid, receiver_uid, token_id) )
+                            .queue();
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
             }
 
 
@@ -82,9 +108,13 @@ public class Event extends ListenerAdapter {
                 String token_id = event.getOption("token_id").getAsString();
 
                 // reply
-                event.getHook()
-                        .sendMessageEmbeds( new TapToken().burnToken(uid, token_id) )
-                        .queue();
+                try {
+                    event.getHook()
+                            .sendMessageEmbeds( new TapToken().burnToken(uid, token_id) )
+                            .queue();
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -101,9 +131,13 @@ public class Event extends ListenerAdapter {
                 }
 
                 // reply
-                event.getHook()
-                        .sendMessageEmbeds( new TapUser().indexToken(num) )
-                        .queue();
+                try {
+                    event.getHook()
+                            .sendMessageEmbeds( new TapUser().indexToken(num) )
+                            .queue();
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
             }
 
 
@@ -114,9 +148,13 @@ public class Event extends ListenerAdapter {
                 String uid = event.getOption("uid").getAsString();
 
                 // reply
-                event.getHook()
-                        .sendMessageEmbeds( new TapUser().getUserInfo(uid) )
-                        .queue();
+                try {
+                    event.getHook()
+                            .sendMessageEmbeds( new TapUser().getUserInfo(uid) )
+                            .queue();
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
             }
 
 
@@ -127,9 +165,13 @@ public class Event extends ListenerAdapter {
                 String uid = event.getOption("uid").getAsString();
 
                 // reply
-                event.getHook()
-                        .sendMessageEmbeds( new TapUser().createUser(uid) )
-                        .queue();
+                try {
+                    event.getHook()
+                            .sendMessageEmbeds( new TapUser().createUser(uid) )
+                            .queue();
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
             }
 
 
@@ -140,9 +182,13 @@ public class Event extends ListenerAdapter {
                 String uid = event.getOption("uid").getAsString();
 
                 // reply
-                event.getHook()
-                        .sendMessageEmbeds( new TapUser().destroyUser(uid) )
-                        .queue();
+                try {
+                    event.getHook()
+                            .sendMessageEmbeds( new TapUser().destroyUser(uid) )
+                            .queue();
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

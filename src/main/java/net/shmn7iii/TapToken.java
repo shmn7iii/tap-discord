@@ -1,5 +1,6 @@
 package net.shmn7iii;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -15,6 +16,20 @@ public class TapToken {
     String APIROOTPATH = "https://tap-api.shmn7iii.net/tokens/";
 
     public TapToken(){}
+
+    public MessageEmbed generateErrorEmbed(JsonNode jnode){
+        String message = jnode.get("error").get("message").textValue();
+        String string = jnode.get("error").get("string").textValue();
+
+        // build embed
+        EmbedBuilder eb = new EmbedBuilder()
+                .setTitle("Error")
+                .addField(message, "-message", false)
+                .addField(string, "-string", false)
+                .setColor(Color.red);
+
+        return eb.build();
+    }
 
     public MessageEmbed generateTokenEmbed(String token_id, String data, String created_at){
         // get download url from data URI
@@ -32,7 +47,7 @@ public class TapToken {
     }
 
 
-    public ArrayList<MessageEmbed> indexToken(@Nullable String num){
+    public ArrayList<MessageEmbed> indexToken(@Nullable String num) throws JsonProcessingException {
         // send API request
         JsonNode json;
         if (num == null){
@@ -41,16 +56,21 @@ public class TapToken {
             json = Http.sendRequest2API(Http.METHOD.GET,APIROOTPATH + "?limit=" + num, null);
         }
 
-        JsonNode tokens = json.get("data");
-
         // create embed
         ArrayList<MessageEmbed> embeds = new ArrayList<MessageEmbed>();
-        for (JsonNode token: tokens){
-            String token_id = token.get("token_id").textValue();
-            String data = token.get("data").textValue();
-            String created_at = token.get("created_at").textValue();
+        try {
+            JsonNode tokens = json.get("data");
+            for (JsonNode token: tokens){
+                String token_id = token.get("token_id").textValue();
+                String data = token.get("data").textValue();
+                String created_at = token.get("created_at").textValue();
+                TapToken tt = new TapToken();
+                MessageEmbed embed =  tt.generateTokenEmbed(token_id, data, created_at);
+                embeds.add(embed);
+            }
+        } catch(NullPointerException e){
             TapToken tt = new TapToken();
-            MessageEmbed embed =  tt.generateTokenEmbed(token_id, data, created_at);
+            MessageEmbed embed = tt.generateErrorEmbed(json);
             embeds.add(embed);
         }
 
@@ -58,7 +78,7 @@ public class TapToken {
     }
 
 
-    public MessageEmbed getTokenInfo(String token_id){
+    public MessageEmbed getTokenInfo(String token_id) throws JsonProcessingException {
         // send API request
         JsonNode json = Http.sendRequest2API(Http.METHOD.GET,APIROOTPATH + token_id, null);
 
@@ -93,7 +113,7 @@ public class TapToken {
     }
 
 
-    public MessageEmbed transferToken(String sender_uid, String receiver_uid, String token_id){
+    public MessageEmbed transferToken(String sender_uid, String receiver_uid, String token_id) throws JsonProcessingException {
         // send API request
         String str_json = "{ \"sender_uid\": \"" + sender_uid + "\", \"receiver_uid\": \"" + receiver_uid + "\" }";
         JsonNode json = Http.sendRequest2API(Http.METHOD.PUT, APIROOTPATH + token_id, str_json);
@@ -112,7 +132,7 @@ public class TapToken {
         return eb.build();
     }
 
-    public MessageEmbed burnToken(String uid, String token_id){
+    public MessageEmbed burnToken(String uid, String token_id) throws JsonProcessingException {
         // send API request
         String str_json = "{ \"uid\": \"" + uid + "\" }";
         JsonNode json = Http.sendRequest2API(Http.METHOD.DELETE, APIROOTPATH + token_id, str_json);

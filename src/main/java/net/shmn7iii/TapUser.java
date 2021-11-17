@@ -1,5 +1,6 @@
 package net.shmn7iii;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -27,7 +28,7 @@ public class TapUser {
         return eb.build();
     }
 
-    public ArrayList<MessageEmbed> indexToken(@Nullable String num){
+    public ArrayList<MessageEmbed> indexToken(@Nullable String num) throws JsonProcessingException {
         // send API request
         JsonNode json;
         if (num == null){
@@ -53,7 +54,7 @@ public class TapUser {
     }
 
 
-    public ArrayList<MessageEmbed> getUserInfo(String uid){
+    public ArrayList<MessageEmbed> getUserInfo(String uid) throws JsonProcessingException {
         ArrayList<MessageEmbed> embeds = new ArrayList<MessageEmbed>();
 
         // send API request
@@ -83,7 +84,7 @@ public class TapUser {
     }
 
 
-    public ArrayList<MessageEmbed> createUser(String uid){
+    public ArrayList<MessageEmbed> createUser(String uid) throws JsonProcessingException {
         // send API request
         String str_json = "{ \"uid\": \"" + uid + "\" }";
         JsonNode json = Http.sendRequest2API(Http.METHOD.POST, APIROOTPATH, str_json);
@@ -92,7 +93,7 @@ public class TapUser {
         return getUserInfo(uid);
     }
 
-    public MessageEmbed destroyUser(String uid){
+    public MessageEmbed destroyUser(String uid) throws JsonProcessingException {
         // send API request
         JsonNode json = Http.sendRequest2API(Http.METHOD.DELETE, APIROOTPATH + uid, "{}");
 
